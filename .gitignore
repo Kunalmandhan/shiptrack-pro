@@ -1,0 +1,45 @@
+# ShipTrack Pro
+
+## Compiled files
+target/
+*.class
+*.jar
+*.war
+
+## IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Maven
+*.log
+dependency-reduced-pom.xml
+
+## Environment
+.env
+*.env.local
+application-local.yml
+
+## Docker
+docker-compose.override.yml
+
+## Node (Frontend)
+node_modules/
+build/
+dist/
+.next/
+
+## Keys
+*.pem
+*.key
+*.p12
+*.jks

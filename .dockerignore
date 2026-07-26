@@ -1,0 +1,24 @@
+# Build outputs
+target/
+dist/
+build/
+*.jar
+*.war
+
+# IDE files
+.idea/
+.vscode/
+*.eclipse/
+.project
+.classpath
+.settings/
+
+# Node & Frontend
+node_modules/
+.npm/
+
+# Git & Logs
+.git/
+.gitignore
+*.log
+docker-compose*.yml
