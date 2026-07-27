@@ -19,6 +19,7 @@ const api = axios.create({
 
 // In-memory token storage (survives page navigation, cleared on tab close)
 let accessToken = null;
+let refreshToken = null;
 
 export const setAccessToken = (token) => {
   accessToken = token;
@@ -28,6 +29,16 @@ export const getAccessToken = () => accessToken;
 
 export const clearAccessToken = () => {
   accessToken = null;
+};
+
+export const setRefreshToken = (token) => {
+  refreshToken = token;
+};
+
+export const getRefreshToken = () => refreshToken;
+
+export const clearRefreshToken = () => {
+  refreshToken = null;
 };
 
 // Request interceptor — attach access token
@@ -80,12 +91,21 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {}, {
-          withCredentials: true, // Send refresh token cookie
+        const storedRefreshToken = refreshToken;
+        if (!storedRefreshToken) {
+          throw new Error('No refresh token available');
+        }
+
+        const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+          refreshToken: storedRefreshToken,
         });
 
         const newToken = response.data.data.accessToken;
+        const newRefreshToken = response.data.data.refreshToken;
         setAccessToken(newToken);
+        if (newRefreshToken) {
+          setRefreshToken(newRefreshToken);
+        }
         processQueue(null, newToken);
 
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -93,6 +113,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         clearAccessToken();
+        clearRefreshToken();
         window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {

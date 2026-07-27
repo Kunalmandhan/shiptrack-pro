@@ -1,0 +1,18 @@
+# Internal service URLs (Docker network)
+services:
+  user-service-url: http://user-service:8082
+
+spring:
+  data:
+    redis:
+      host: redis
+
+  mail:
+    host: mailpit
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false

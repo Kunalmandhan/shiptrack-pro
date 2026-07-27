@@ -83,6 +83,15 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    /** Success with message and data */
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .data(data)
+                .build();
+    }
+
     /** Success with message only — used for simple confirmation responses */
     public static <T> ApiResponse<T> success(String message) {
         return ApiResponse.<T>builder()
@@ -91,12 +100,13 @@ public class ApiResponse<T> {
                 .build();
     }
 
-    /** Success with message and HTTP status — used for register (201 Created) */
+    /**
+     * Success with message only — HTTP status should be set via ResponseEntity.
+     * @deprecated Use {@link #success(String)} instead. The status parameter was unused.
+     */
+    @Deprecated(since = "1.0.0", forRemoval = true)
     public static <T> ApiResponse<T> success(String message, HttpStatus status) {
-        return ApiResponse.<T>builder()
-                .success(true)
-                .message(message)
-                .build();
+        return success(message);
     }
 
     /**

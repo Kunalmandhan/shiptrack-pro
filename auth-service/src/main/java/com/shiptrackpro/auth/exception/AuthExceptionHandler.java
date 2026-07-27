@@ -28,7 +28,11 @@ public class AuthExceptionHandler extends GlobalExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<ApiResponse<Void>> handleHttpClientError(
             HttpClientErrorException ex, HttpServletRequest request) {
-        log.error("User Service client error: {} | Path: {}", ex.getStatusCode(), request.getRequestURI());
+        if (ex.getStatusCode().value() == 404) {
+            log.debug("User Service client error: {} | Path: {}", ex.getStatusCode(), request.getRequestURI());
+        } else {
+            log.warn("User Service client error: {} | Path: {}", ex.getStatusCode(), request.getRequestURI());
+        }
 
         String message = switch (ex.getStatusCode().value()) {
             case 404 -> "User not found";

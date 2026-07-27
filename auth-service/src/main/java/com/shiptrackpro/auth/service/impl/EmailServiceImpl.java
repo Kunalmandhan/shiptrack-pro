@@ -67,16 +67,34 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendHtmlEmail(String to, String subject, String htmlBody) {
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlBody, true);
-            mailSender.send(message);
-        } catch (MessagingException e) {
-            log.error("Failed to send email to: {} | Subject: {} | Error: {}", to, subject, e.getMessage());
+        int maxRetries = 3;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                helper.setFrom(fromEmail);
+                helper.setTo(to);
+                helper.setSubject(subject);
+                helper.setText(htmlBody, true);
+                mailSender.send(message);
+                return; // Success — exit retry loop
+            } catch (MessagingException e) {
+                log.warn("Email send attempt {}/{} failed for: {} | Subject: {} | Error: {}",
+                        attempt, maxRetries, to, subject, e.getMessage());
+                if (attempt == maxRetries) {
+                    log.error("All {} email send attempts exhausted for: {} | Subject: {}", maxRetries, to, subject);
+                    // Don't throw — this runs @Async; throwing would only hit the async exception handler
+                    return;
+                }
+                try {
+                    // Exponential backoff: 1s, 2s, 4s
+                    Thread.sleep(1000L * (1L << (attempt - 1)));
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    log.warn("Email retry sleep interrupted for: {}", to);
+                    return;
+                }
+            }
         }
     }
 

@@ -1,0 +1,9 @@
+# Internal service URLs (Docker network)
+services:
+  shipment-service-url: http://shipment-service:8083
+  tracking-service-url: http://tracking-service:8084
+
+spring:
+  data:
+    redis:
+      host: redis

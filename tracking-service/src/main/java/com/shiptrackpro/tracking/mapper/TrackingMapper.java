@@ -1,4 +1,4 @@
-package com.shiptrackpro.tracking.dto;
+package com.shiptrackpro.tracking.mapper;
 
 import com.shiptrackpro.tracking.dto.request.LocationUpdateRequest;
 import com.shiptrackpro.tracking.dto.response.LocationResponse;
@@ -15,8 +15,8 @@ public interface TrackingMapper {
 
     LocationResponse toLocationResponse(LocationUpdateRequest request);
 
-    @Mapping(target = "id", ignore = "")
-    @Mapping(target = "createdAt", ignore = "")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
     TrackingHistory toTrackingHistory(LocationUpdateRequest request);
 
     List<LocationResponse> toLocationResponseList(List<TrackingHistory> histories);

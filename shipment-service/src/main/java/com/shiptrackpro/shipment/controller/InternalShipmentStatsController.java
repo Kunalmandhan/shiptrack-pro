@@ -31,7 +31,7 @@ public class InternalShipmentStatsController {
         long inTransit = shipmentRepository.countByStatus(ShipmentStatus.IN_TRANSIT);
         long outForDelivery = shipmentRepository.countByStatus(ShipmentStatus.OUT_FOR_DELIVERY);
         long delivered = shipmentRepository.countByStatus(ShipmentStatus.DELIVERED);
-        long failed = shipmentRepository.countByStatus(ShipmentStatus.FAILED);
+        long failed = shipmentRepository.countByStatus(ShipmentStatus.FAILED_DELIVERY);
         long cancelled = shipmentRepository.countByStatus(ShipmentStatus.CANCELLED);
         long delayed = shipmentRepository.countByStatus(ShipmentStatus.DELAYED);
 
@@ -57,7 +57,7 @@ public class InternalShipmentStatsController {
                 .statusDistribution(statusDist)
                 .build();
 
-        return ResponseEntity.ok(ApiResponse.success(response, "Platform shipment statistics fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Platform shipment statistics fetched successfully", response));
     }
 
     @GetMapping("/customer/{customerId}")
@@ -68,7 +68,7 @@ public class InternalShipmentStatsController {
         long inTransit = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.IN_TRANSIT);
         long outForDelivery = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.OUT_FOR_DELIVERY);
         long delivered = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.DELIVERED);
-        long failed = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.FAILED);
+        long failed = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.FAILED_DELIVERY);
         long cancelled = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.CANCELLED);
         long delayed = shipmentRepository.countBySenderIdAndStatus(customerId, ShipmentStatus.DELAYED);
 
@@ -94,6 +94,6 @@ public class InternalShipmentStatsController {
                 .statusDistribution(statusDist)
                 .build();
 
-        return ResponseEntity.ok(ApiResponse.success(response, "Customer shipment statistics fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Customer shipment statistics fetched successfully", response));
     }
 }

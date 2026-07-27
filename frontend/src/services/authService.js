@@ -1,4 +1,4 @@
-import api, { setAccessToken, clearAccessToken } from './api';
+import api, { setAccessToken, clearAccessToken, setRefreshToken, getRefreshToken, clearRefreshToken } from './api';
 
 /**
  * Auth Service API calls.
@@ -12,20 +12,27 @@ const authService = {
     const response = await api.post('/auth/login', credentials);
     if (response.data.success) {
       setAccessToken(response.data.data.accessToken);
+      if (response.data.data.refreshToken) {
+        setRefreshToken(response.data.data.refreshToken);
+      }
     }
     return response;
   },
 
   logout: async () => {
     try {
-      await api.post('/auth/logout');
+      const refreshTokenValue = getRefreshToken();
+      await api.post('/auth/logout', refreshTokenValue ? { refreshToken: refreshTokenValue } : {});
     } finally {
       clearAccessToken();
+      clearRefreshToken();
     }
   },
 
-  refreshToken: () =>
-    api.post('/auth/refresh'),
+  refreshToken: () => {
+    const refreshTokenValue = getRefreshToken();
+    return api.post('/auth/refresh', { refreshToken: refreshTokenValue });
+  },
 
   verifyEmail: (token) =>
     api.get(`/auth/verify-email?token=${token}`),
@@ -41,3 +48,4 @@ const authService = {
 };
 
 export default authService;
+

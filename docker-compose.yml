@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ==========================================
   # INFRASTRUCTURE CONTAINERS
@@ -39,26 +37,9 @@ services:
     networks:
       - shiptrack-net
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: shiptrack-rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - shiptrack-net
-
-  mailhog:
-    image: mailhog/mailhog:latest
-    container_name: shiptrack-mailhog
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: shiptrack-mailpit
     ports:
       - "1025:1025" # SMTP port
       - "8025:8025" # Web UI port
@@ -71,26 +52,48 @@ services:
 
   api-gateway:
     build:
-      context: .
-      dockerfile: ./api-gateway/Dockerfile
+      context: ./api-gateway
+      dockerfile: Dockerfile
     container_name: shiptrack-api-gateway
     ports:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATA_REDIS_HOST=redis
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - shiptrack-net
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: shiptrack-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shiptrack_auth
+      - SPRING_DATA_REDIS_HOST=redis
+      - SPRING_MAIL_HOST=mailpit
+      - SPRING_MAIL_PORT=1025
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - shiptrack-net
 
   user-service:
     build:
-      context: .
-      dockerfile: ./user-service/Dockerfile
+      context: ./user-service
+      dockerfile: Dockerfile
     container_name: shiptrack-user-service
     ports:
-      - "8081:8081"
+      - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shiptrack_user
@@ -102,11 +105,11 @@ services:
 
   shipment-service:
     build:
-      context: .
-      dockerfile: ./shipment-service/Dockerfile
+      context: ./shipment-service
+      dockerfile: Dockerfile
     container_name: shiptrack-shipment-service
     ports:
-      - "8082:8082"
+      - "8083:8083"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shiptrack_shipment
@@ -116,33 +119,20 @@ services:
     networks:
       - shiptrack-net
 
-  driver-service:
-    build:
-      context: .
-      dockerfile: ./driver-service/Dockerfile
-    container_name: shiptrack-driver-service
-    ports:
-      - "8083:8083"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shiptrack_driver
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - shiptrack-net
-
   tracking-service:
     build:
-      context: .
-      dockerfile: ./tracking-service/Dockerfile
+      context: ./tracking-service
+      dockerfile: Dockerfile
     container_name: shiptrack-tracking-service
     ports:
       - "8084:8084"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shiptrack_tracking
       - SPRING_DATA_REDIS_HOST=redis
     depends_on:
+      postgres:
+        condition: service_healthy
       redis:
         condition: service_healthy
     networks:
@@ -150,25 +140,26 @@ services:
 
   notification-service:
     build:
-      context: .
-      dockerfile: ./notification-service/Dockerfile
+      context: ./notification-service
+      dockerfile: Dockerfile
     container_name: shiptrack-notification-service
     ports:
       - "8085:8085"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_MAIL_HOST=mailhog
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/shiptrack_notification
+      - SPRING_MAIL_HOST=mailpit
+      - SPRING_MAIL_PORT=1025
     depends_on:
-      rabbitmq:
+      postgres:
         condition: service_healthy
     networks:
       - shiptrack-net
 
   analytics-service:
     build:
-      context: .
-      dockerfile: ./analytics-service/Dockerfile
+      context: ./analytics-service
+      dockerfile: Dockerfile
     container_name: shiptrack-analytics-service
     ports:
       - "8086:8086"

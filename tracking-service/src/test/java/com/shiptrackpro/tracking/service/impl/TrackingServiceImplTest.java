@@ -6,7 +6,7 @@ import com.shiptrackpro.tracking.dto.request.LocationUpdateRequest;
 import com.shiptrackpro.tracking.dto.response.LocationResponse;
 import com.shiptrackpro.tracking.dto.response.TrackingHistoryResponse;
 import com.shiptrackpro.tracking.entity.TrackingHistory;
-import com.shiptrackpro.tracking.dto.TrackingMapper;
+import com.shiptrackpro.tracking.mapper.TrackingMapper;
 import com.shiptrackpro.tracking.repository.TrackingHistoryRepository;
 import com.shiptrackpro.tracking.service.RedisLocationService;
 import com.shiptrackpro.tracking.util.DistanceCalculator;

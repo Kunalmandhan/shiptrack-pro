@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 import toast from 'react-hot-toast';
 import authService from '../services/authService';
 import userService from '../services/userService';
-import { setAccessToken, clearAccessToken } from '../services/api';
+import { setAccessToken, clearAccessToken, setRefreshToken, clearRefreshToken } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -20,6 +20,9 @@ export function AuthProvider({ children }) {
         const response = await authService.refreshToken();
         if (response.data?.success) {
           setAccessToken(response.data.data.accessToken);
+          if (response.data.data.refreshToken) {
+            setRefreshToken(response.data.data.refreshToken);
+          }
           try {
             const profileResponse = await userService.getProfile();
             if (profileResponse.data?.success) {
@@ -85,6 +88,7 @@ export function AuthProvider({ children }) {
       // Ignore logout errors
     } finally {
       clearAccessToken();
+      clearRefreshToken();
       setUser(null);
       toast.success('Logged out successfully.');
     }

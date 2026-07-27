@@ -125,6 +125,11 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 .build();
     }
 
+    /**
+     * PLACEHOLDER: Returns fabricated delay analysis data.
+     * TODO: Replace with real delay tracking data from shipment status transitions
+     *       and a delay_reasons table when delay tracking is implemented.
+     */
     @Override
     public DelayAnalysisDTO getDelayAnalysis() {
         ShipmentStatsResponse stats = shipmentServiceClient.getPlatformStats();
@@ -146,6 +151,11 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 .build();
     }
 
+    /**
+     * PLACEHOLDER: Generates synthetic shipment volume time-series data.
+     * TODO: Replace with real aggregated shipment counts from shipment-service
+     *       using a daily/weekly rollup query.
+     */
     private List<ShipmentVolumeDataPointDTO> generateVolumeSeries(String period, double multiplier) {
         List<ShipmentVolumeDataPointDTO> list = new ArrayList<>();
         int days = "MONTH".equalsIgnoreCase(period) ? 30 : ("WEEK".equalsIgnoreCase(period) ? 7 : 14);
