@@ -12,16 +12,16 @@ COPY tracking-service/pom.xml tracking-service/
 COPY notification-service/pom.xml notification-service/
 COPY analytics-service/pom.xml analytics-service/
 
-RUN mvn dependency:go-offline -pl common,shipment-service -am -q || true
+RUN mvn dependency:go-offline -pl common,auth-service -am -q || true
 
 COPY common/src common/src
-COPY shipment-service/src shipment-service/src
+COPY auth-service/src auth-service/src
 
-RUN mvn clean package -pl common,shipment-service -am -DskipTests -q
+RUN mvn clean package -pl common,auth-service -am -DskipTests -q
 
 # Stage 2: Runtime
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
-COPY --from=build /workspace/shipment-service/target/*.jar app.jar
-EXPOSE 8083
+COPY --from=build /workspace/auth-service/target/*.jar app.jar
+EXPOSE 8081
 ENTRYPOINT ["java", "-jar", "app.jar"]

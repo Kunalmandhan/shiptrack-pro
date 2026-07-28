@@ -24,11 +24,11 @@ public class AdminAnalyticsController {
 
         if (!"ADMIN".equalsIgnoreCase(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), "Access denied: Admin role required", "/api/v1/analytics/admin/dashboard"));
+                    .body(ApiResponse.error("Access denied: Admin role required", "ACCESS_DENIED", "/api/v1/analytics/admin/dashboard"));
         }
 
         AdminDashboardDTO data = analyticsService.getAdminDashboard();
-        return ResponseEntity.ok(ApiResponse.success(data, "Admin dashboard metrics fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Admin dashboard metrics fetched successfully", data, "/api/v1/analytics/admin/dashboard"));
     }
 
     @GetMapping("/shipments/volume")
@@ -38,11 +38,11 @@ public class AdminAnalyticsController {
 
         if (!"ADMIN".equalsIgnoreCase(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), "Access denied: Admin role required", "/api/v1/analytics/admin/shipments/volume"));
+                    .body(ApiResponse.error("Access denied: Admin role required", "ACCESS_DENIED", "/api/v1/analytics/admin/shipments/volume"));
         }
 
         List<ShipmentVolumeDataPointDTO> data = analyticsService.getAdminVolumeSeries(period);
-        return ResponseEntity.ok(ApiResponse.success(data, "Shipment volume time-series fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Shipment volume time-series fetched successfully", data, "/api/v1/analytics/admin/shipments/volume"));
     }
 
     @GetMapping("/shipments/status-distribution")
@@ -51,11 +51,11 @@ public class AdminAnalyticsController {
 
         if (!"ADMIN".equalsIgnoreCase(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), "Access denied: Admin role required", "/api/v1/analytics/admin/shipments/status-distribution"));
+                    .body(ApiResponse.error("Access denied: Admin role required", "ACCESS_DENIED", "/api/v1/analytics/admin/shipments/status-distribution"));
         }
 
         StatusDistributionDTO data = analyticsService.getStatusDistribution();
-        return ResponseEntity.ok(ApiResponse.success(data, "Status distribution fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Status distribution fetched successfully", data, "/api/v1/analytics/admin/shipments/status-distribution"));
     }
 
     @GetMapping("/delays")
@@ -64,10 +64,11 @@ public class AdminAnalyticsController {
 
         if (!"ADMIN".equalsIgnoreCase(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error(HttpStatus.FORBIDDEN.value(), "Access denied: Admin role required", "/api/v1/analytics/admin/delays"));
+                    .body(ApiResponse.error("Access denied: Admin role required", "ACCESS_DENIED", "/api/v1/analytics/admin/delays"));
         }
 
         DelayAnalysisDTO data = analyticsService.getDelayAnalysis();
-        return ResponseEntity.ok(ApiResponse.success(data, "Delay analysis metrics fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Delay analysis metrics fetched successfully", data, "/api/v1/analytics/admin/delays"));
     }
 }
+

@@ -26,12 +26,12 @@ public class CustomerAnalyticsController {
 
         if (userIdHeader == null || userIdHeader.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error(HttpStatus.UNAUTHORIZED.value(), "Missing authentication header", "/api/v1/analytics/customer/dashboard"));
+                    .body(ApiResponse.error("Missing authentication header", "UNAUTHORIZED", "/api/v1/analytics/customer/dashboard"));
         }
 
         UUID customerId = UUID.fromString(userIdHeader);
         CustomerDashboardDTO data = analyticsService.getCustomerDashboard(customerId);
-        return ResponseEntity.ok(ApiResponse.success(data, "Customer dashboard metrics fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Customer dashboard metrics fetched successfully", data, "/api/v1/analytics/customer/dashboard"));
     }
 
     @GetMapping("/volume")
@@ -41,11 +41,12 @@ public class CustomerAnalyticsController {
 
         if (userIdHeader == null || userIdHeader.isBlank()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponse.error(HttpStatus.UNAUTHORIZED.value(), "Missing authentication header", "/api/v1/analytics/customer/volume"));
+                    .body(ApiResponse.error("Missing authentication header", "UNAUTHORIZED", "/api/v1/analytics/customer/volume"));
         }
 
         UUID customerId = UUID.fromString(userIdHeader);
         List<ShipmentVolumeDataPointDTO> data = analyticsService.getCustomerVolumeSeries(customerId, period);
-        return ResponseEntity.ok(ApiResponse.success(data, "Customer volume series fetched successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Customer volume series fetched successfully", data, "/api/v1/analytics/customer/volume"));
     }
 }
+

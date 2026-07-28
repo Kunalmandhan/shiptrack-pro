@@ -52,8 +52,8 @@ services:
 
   api-gateway:
     build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: api-gateway/Dockerfile
     container_name: shiptrack-api-gateway
     ports:
       - "8080:8080"
@@ -68,8 +68,8 @@ services:
 
   auth-service:
     build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: auth-service/Dockerfile
     container_name: shiptrack-auth-service
     ports:
       - "8081:8081"
@@ -89,8 +89,8 @@ services:
 
   user-service:
     build:
-      context: ./user-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: user-service/Dockerfile
     container_name: shiptrack-user-service
     ports:
       - "8082:8082"
@@ -105,8 +105,8 @@ services:
 
   shipment-service:
     build:
-      context: ./shipment-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: shipment-service/Dockerfile
     container_name: shiptrack-shipment-service
     ports:
       - "8083:8083"
@@ -121,8 +121,8 @@ services:
 
   tracking-service:
     build:
-      context: ./tracking-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: tracking-service/Dockerfile
     container_name: shiptrack-tracking-service
     ports:
       - "8084:8084"
@@ -140,8 +140,8 @@ services:
 
   notification-service:
     build:
-      context: ./notification-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: notification-service/Dockerfile
     container_name: shiptrack-notification-service
     ports:
       - "8085:8085"
@@ -158,8 +158,8 @@ services:
 
   analytics-service:
     build:
-      context: ./analytics-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: analytics-service/Dockerfile
     container_name: shiptrack-analytics-service
     ports:
       - "8086:8086"
